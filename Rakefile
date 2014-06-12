@@ -12,8 +12,8 @@ desc "Run beaker-rspec and beaker tests"
 task 'beaker:test:all',[:host,:type] => ["rake:beaker:rspec:test", "rake:beaker:test"] do |t,args|
 end
 
-desc "Run beaker tests"
-task 'beaker:test',[:host,:type] => [:set_beaker_variables] do |t,args|
+desc "Run Beaker using the older xUnit style runner"
+task 'beaker:xunit',[:host,:type] => [:set_beaker_variables] do |t,args|
   sh(build_beaker_command args)
 end
 
