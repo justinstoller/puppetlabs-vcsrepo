@@ -38,8 +38,9 @@ task :set_beaker_variables do |t,args|
   if args[:host]
     ENV['BEAKER_set'] = args[:host]
     puts "Host to test #{ENV['BEAKER_set']}"
+    @hosts_config = "spec/acceptance/nodesets/#{args[:host]}.yml"
   end
-  ENV['BEAKER_IS_PE'] = args[:type] == 'pe'? "true": "false"
+  ENV['BEAKER_IS_PE'] = args[:type] == 'pe'? "true": nil
   if ENV['BEAKER_setfile']
     @hosts_config = ENV['BEAKER_setfile']
   end
