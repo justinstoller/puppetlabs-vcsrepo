@@ -17,17 +17,6 @@ task 'beaker:xunit',[:host,:type] => [:set_beaker_variables] do |t,args|
   sh(build_beaker_command args)
 end
 
-desc "Run beaker and beaker-rspec tasks"
-task 'beaker:test:pe',:host do |t,args|
-  args.with_defaults(:type=> 'pe')
-  Rake::Task['beaker:test'].invoke(args[:host],args[:type])
-end
-
-task 'beaker:test:git',:host do |t,args|
-  args.with_defaults({:type=> 'git'})
-  Rake::Task['beaker:test'].invoke(args[:host],args[:type])
-end
-
 task :set_beaker_variables do |t,args|
   puts 'Setting environment variables for testing'
   if args[:host]
