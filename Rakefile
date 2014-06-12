@@ -1,6 +1,13 @@
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'rake'
 
+Rake::Task['beaker'].clear
+
+desc 'Run Beaker via RSpec'
+task 'beaker:spec' do
+  sh "bundle exec rspec --color spec/acceptance"
+end
+
 desc "Run beaker-rspec and beaker tests"
 task 'beaker:test:all',[:host,:type] => ["rake:beaker:rspec:test", "rake:beaker:test"] do |t,args|
 end
