@@ -5,21 +5,9 @@ desc "Run beaker-rspec and beaker tests"
 task 'beaker:test:all',[:host,:type] => ["rake:beaker:rspec:test", "rake:beaker:test"] do |t,args|
 end
 
-desc "Run beaker-rspec tests"
-task 'beaker:rspec:test',[:host,:type] => [:set_beaker_variables] do |t,args|
-  Rake::Task['beaker-rspec:test'].invoke(args)
-end
-
 desc "Run beaker tests"
 task 'beaker:test',[:host,:type] => [:set_beaker_variables] do |t,args|
   sh(build_beaker_command args)
-end
-
-desc "Run beaker rspec tasks against pe"
-RSpec::Core::RakeTask.new('beaker-rspec:test',[:host,:type]=>:set_beaker_variables) do |t,args|
-  t.pattern     = 'spec/acceptance'
-  t.rspec_opts  = '--color'
-  t.verbose     = true
 end
 
 desc "Run beaker and beaker-rspec tasks"
