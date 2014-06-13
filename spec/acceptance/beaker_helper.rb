@@ -12,7 +12,11 @@ test_name "Installing Puppet and vcsrepo module" do
   step 'install module' do
     proj_root = File.expand_path(File.join(File.dirname(__FILE__),'..','..'))
 
-    puppet_module_install(:source => proj_root, :module_name => 'vcsrepo')
+    if ENV['SPEC_VERSION'] && ENV['SPEC_FORGE']
+      on hosts, puppet("module install --module_repository #{ENV['SPEC_VERSION']} --version #{ENV['SPEC_VERSION']} --force")
+    else
+      puppet_module_install(:source => proj_root, :module_name => 'vcsrepo')
+    end
 
     gitconfig = <<-EOS
 [user]
