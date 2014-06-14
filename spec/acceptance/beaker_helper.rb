@@ -13,7 +13,7 @@ test_name "Installing Puppet and vcsrepo module" do
     proj_root = File.expand_path(File.join(File.dirname(__FILE__),'..','..'))
 
     if ENV['SPEC_VERSION'] && ENV['SPEC_FORGE']
-      on hosts, puppet("module install puppetlabs/vcsrepo --module_repository #{ENV['SPEC_FORGE']} --version #{ENV['SPEC_VERSION']} --force")
+      on hosts, puppet("module install puppetlabs-vcsrepo --module_repository #{ENV['SPEC_FORGE']} --version #{ENV['SPEC_VERSION']} --force")
     else
       puppet_module_install(:source => proj_root, :module_name => 'vcsrepo')
     end
