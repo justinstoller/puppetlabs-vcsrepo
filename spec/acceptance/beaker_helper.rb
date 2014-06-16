@@ -13,12 +13,45 @@ test_name "Installing Puppet and vcsrepo module" do
     proj_root = File.expand_path(File.join(File.dirname(__FILE__),'..','..'))
     # Waiting on release of puppet_module_install in beaker
     #puppet_module_install(:source => proj_root, :module_name => 'vcsrepo')
-    scp_to(hosts, proj_root, File.join(hosts.first['distmoduledir'], 'vcsrepo'))
-    gitconfig = <<-EOS
-[user]
-	email = root@localhost
-	name = root
-EOS
-    create_remote_file(hosts, "/root/.gitconfig", gitconfig)
+    hosts.each do |host|
+      distmoduledir = on(host, "echo #{host['distmoduledir']}").stdout.chomp
+      on host, "mkdir -p #{distmoduledir}"
+      scp_to(host, proj_root, File.join(distmoduledir, 'vcsrepo'))
+      case fact_on(host, 'osfamily')
+      when 'RedHat'
+        if on(host, 'rpm -qa | grep epel-release', :acceptable_exit_codes => [0,1]).exit_code == 1
+          case host['platform']
+          when /el-4/
+            on host, "curl https://dl.fedoraproject.org/pub/epel/4/i386/epel-release-4-10.noarch.rpm --insecure -o epel-release-4-10.noarch.rpm"
+            on host, "rpm -i epel-release-4-10.noarch.rpm"
+            on host, "yum makecache"
+          when /el-5/
+            on host, "rpm -i https://dl.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
+            on host, "yum makecache"
+          end
+        end
+
+        if host['platform'] =~ /el-4/
+          if on(host, 'which yum', :acceptable_exit_codes => [0,1]).exit_code == 0
+            on host, 'yum install -y git'
+          end
+        else
+          install_package(host, 'git') 
+        end
+      when 'Debian'
+        install_package(host, 'git-core')
+      when /windows/i
+        install_package(host, 'git')
+      when /SuSE/i
+        install_package(host, 'git')
+      else
+        if !check_for_package(host, 'git')
+          puts "Git package is required for this module"
+          exit
+        end
+      end
+      on host, 'git config --global user.email "root@localhost"'
+      on host, 'git config --global user.name "root"'
+    end
   end
 end
